@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import tech.turso.libsql.Connection;
 import tech.turso.libsql.Database;
+import tech.turso.libsql.EmbeddedReplicaDatabase;
 import tech.turso.libsql.Libsql;
 import tech.turso.libsql.Rows;
 import tech.turso.test.databinding.ActivityMainBinding;
@@ -40,10 +41,11 @@ public class MainActivity extends AppCompatActivity {
                 String count = "Not found";
                 try (Database db = Libsql.openRemote(dbUrl, dbAuthToken)) { // Remote only
 //                try (Database db = Libsql.openLocal(dbFileBasePath + "/test-local.db")) { // Local only
-//                try (Database db = Libsql.openEmbeddedReplica(dbFileBasePath + "/test-embedded.db", dbUrl, dbAuthToken)) { // Remote with local embedded replica
+//                try (EmbeddedReplicaDatabase db = Libsql.openEmbeddedReplica(dbFileBasePath + "/test-embedded.db", dbUrl, dbAuthToken)) { // Remote with local embedded replica
                     try (Connection conn = db.connect()) {
                         conn.execute("CREATE TABLE IF NOT EXISTS test (a int)");
                         conn.execute("INSERT INTO test VALUES(1)");
+//                        db.sync(); // Sync embedded replica only
                         try (Rows rows = conn.query("SELECT COUNT(*) FROM test")) {
                             Object[] row = null;
                             while ((row = rows.nextRow()) != null) {
